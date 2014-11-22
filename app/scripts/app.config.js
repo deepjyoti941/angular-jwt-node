@@ -13,6 +13,7 @@ angular.module('jwtAngularNodeApp').config(function ($urlRouterProvider, $stateP
 
   .state('register', {
     url: '/register',
-    templateUrl: '/views/register.html'
+    templateUrl: '/views/register.html',
+    controller: 'RegisterCtrl'
   });
 });
