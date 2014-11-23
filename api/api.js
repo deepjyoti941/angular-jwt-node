@@ -102,13 +102,28 @@ var jobs = [
 ];
 
 app.get('/jobs', function (req, res) {
+
   if (!req.headers.authorization) {
     return res.status(401).send({
       message: 'You are not authorized'
     });
   }
+
+  var token = req.headers.authorization.split(' ')[1];
+  var payload = jwt.decode(token, "secret_key");
+
+  if (!payload.sub) {
+    res.status(401).send({
+      message: 'Authorization failed'
+    });
+  }
+
   res.json(jobs);
 })
+/*
+ * end here
+ */
+
 
 mongoose.connect('mongodb://localhost/jwtAngularNodeApp');
 
