@@ -2,7 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
-var jwt = require('./services/jwt.js');
+var jwt = require('jwt-simple');
 
 
 var app = express();
