@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('jwtAngularNodeApp').config(function ($urlRouterProvider, $stateProvider) {
+angular.module('jwtAngularNodeApp').config(function ($urlRouterProvider, $stateProvider, $httpProvider) {
 
   $urlRouterProvider.otherwise('/');
 
@@ -27,4 +27,8 @@ angular.module('jwtAngularNodeApp').config(function ($urlRouterProvider, $stateP
     url: '/logout',
     controller: 'LogoutCtrl'
   });
-});
+
+  $httpProvider.interceptors.push('authInterceptor');
+})
+
+.constant('API_URL', 'http://localhost:3000/');

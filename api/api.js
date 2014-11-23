@@ -91,6 +91,25 @@ app.post('/register', function (req, res) {
   })
 })
 
+/*
+ * securing the job resource start here
+ */
+var jobs = [
+  'Cook',
+  'SuperHero',
+  'Unicorn Wisper',
+  'Toast Inspector'
+];
+
+app.get('/jobs', function (req, res) {
+  if (!req.headers.authorization) {
+    return res.status(401).send({
+      message: 'You are not authorized'
+    });
+  }
+  res.json(jobs);
+})
+
 mongoose.connect('mongodb://localhost/jwtAngularNodeApp');
 
 var server = app.listen(3000, function () {
