@@ -1,13 +1,15 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var bcrypt = require('bcrypt-nodejs');
+
 
 var app = express();
 
 app.use(bodyParser.json());
 
 /*
- * custom middleware for cross origin request
+ * custom middleware for cross origin request - start here
  */
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -17,12 +19,42 @@ app.use(function (req, res, next) {
   next();
 
 })
+/*
+ * end here
+ */
 
-var User = mongoose.model('User', {
+
+/*
+ * using bcrypt-nodejs module to hash password - start here
+ */
+var UserSchema = new mongoose.Schema({
   email: String,
   password: String
-
 })
+
+var User = mongoose.model('User', UserSchema);
+
+UserSchema.pre('save', function (next) {
+  var user = this;
+
+  if (!user.isModified('password')) return next();
+
+  bcrypt.genSalt(10, function (err, salt) {
+    if (err) return next(err);
+
+    bcrypt.hash(user.password, salt, null, function (err, hash) {
+      if (err) return next(err);
+
+      user.password = hash;
+      next();
+    })
+  })
+})
+/*
+ * end here
+ */
+
+
 
 app.post('/register', function (req, res) {
   var user = req.body;
