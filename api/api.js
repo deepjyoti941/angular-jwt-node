@@ -11,6 +11,7 @@ app.use(bodyParser.json());
 /*
  * custom middleware for cross origin request - start here
  */
+
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
@@ -27,10 +28,21 @@ app.use(function (req, res, next) {
 /*
  * using bcrypt-nodejs module to hash password - start here
  */
+
 var UserSchema = new mongoose.Schema({
   email: String,
   password: String
 })
+
+//hide the password when response - start here
+
+UserSchema.methods.toJSON = function () {
+  var user = this.toObject();
+  delete user.password;
+
+  return user;
+}
+//end eher
 
 var User = mongoose.model('User', UserSchema);
 
@@ -55,7 +67,6 @@ UserSchema.pre('save', function (next) {
  */
 
 
-
 app.post('/register', function (req, res) {
   var user = req.body;
 
@@ -65,7 +76,7 @@ app.post('/register', function (req, res) {
   })
 
   newUser.save(function (err) {
-    res.status(200).json(newUser);
+    res.status(200).send(newUser.toJSON());
   })
 })
 
