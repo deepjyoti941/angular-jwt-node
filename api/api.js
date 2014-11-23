@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
+var jwt = require('./services/jwt.js');
 
 
 var app = express();
@@ -82,6 +83,8 @@ app.post('/register', function (req, res) {
 
 mongoose.connect('mongodb://localhost/jwtAngularNodeApp');
 
-var server = app.listen(3000, function () {
-  console.log('api is listening on ', server.address().port);
-})
+console.log(jwt.encode('hi', 'secret'));
+
+//var server = app.listen(3000, function () {
+//  console.log('api is listening on ', server.address().port);
+//})
