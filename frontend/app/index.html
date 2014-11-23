@@ -26,24 +26,12 @@
 
   <!-- Add your site or application content here -->
   <div class="container" ng-cloak>
-    <div ng-controller="HeaderCtrl" class="header">
-      <ul class="nav nav-pills pull-right">
-        <li ui-sref-active="active">
-          <a ui-sref="main">Home</a>
-        </li>
-        <li ui-sref-active="active">
-          <a ui-sref="jobs">Jobs</a>
-        </li>
-        <li ng-hide="isAuthenticated()" ui-sref-active="active">
-          <a ui-sref="register">Register</a>
-        </li>
-        <li ng-show="isAuthenticated()" ui-sref-active="active">
-          <a ui-sref="logout">Logout</a>
-        </li>
-      </ul>
-      <h3 class="text-muted">jwtAngularNode</h3>
+    <div ng-include="'views/header.html'"></div>
+    <div class="row">
+      <div class="ui-view-container">
+        <div ui-view></div>
+      </div>
     </div>
-    <div ui-view></div>
     <div class="alert alert-{{alert.type}} animated main-alert" ng-class="{'flipInY': alert.show, 'flipOutY': !alert.show, 'alert-hidden': !alert.hasBeenShown}"><strong>{{alert.title}}</strong> {{alert.message}}</div>
     <div class="footer">
     </div>
@@ -81,6 +69,7 @@
   <script src="bower_components/angular/angular.js"></script>
   <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
   <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+  <script src="bower_components/angular-animate/angular-animate.js"></script>
   <!-- endbower -->
   <!-- endbuild -->
 
