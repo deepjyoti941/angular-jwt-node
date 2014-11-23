@@ -120,6 +120,10 @@ body {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 .main-alert {
+  position: absolute;
+  top: 70px;
+  left: 15px;
+  right: 5px;
   max-width: 400px;
   margin: 0 auto;
 }
