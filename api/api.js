@@ -76,15 +76,23 @@ app.post('/register', function (req, res) {
     password: user.password
   })
 
+  var payload = {
+    iss: req.hostname,
+    syb: user._id
+  }
+
+  var token = jwt.encode(payload, "secret_key");
+
   newUser.save(function (err) {
-    res.status(200).send(newUser.toJSON());
+    res.status(200).send({
+      user: newUser.toJSON(),
+      token: token
+    });
   })
 })
 
 mongoose.connect('mongodb://localhost/jwtAngularNodeApp');
 
-console.log(jwt.encode('hi', 'secret'));
-
-//var server = app.listen(3000, function () {
-//  console.log('api is listening on ', server.address().port);
-//})
+var server = app.listen(3000, function () {
+  console.log('api is listening on ', server.address().port);
+})
