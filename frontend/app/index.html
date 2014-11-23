@@ -26,18 +26,20 @@
 
   <!-- Add your site or application content here -->
   <div class="container" ng-cloak>
-    <div class="header">
+    <div ng-controller="HeaderCtrl" class="header">
       <ul class="nav nav-pills pull-right">
         <li ui-sref-active="active">
           <a ui-sref="main">Home</a>
         </li>
-        <li ui-sref-active="active">
+        <li ng-hide="isAuthenticated()" ui-sref-active="active">
           <a ui-sref="register">Register</a>
+        </li>
+        <li ng-show="isAuthenticated()" ui-sref-active="active">
+          <a ui-sref="logout">Logout</a>
         </li>
       </ul>
       <h3 class="text-muted">jwtAngularNode</h3>
     </div>
-
     <div ui-view></div>
     <div class="alert alert-{{alert.type}} animated main-alert" ng-class="{'flipInY': alert.show, 'flipOutY': !alert.show, 'alert-hidden': !alert.hasBeenShown}"><strong>{{alert.title}}</strong> {{alert.message}}</div>
     <div class="footer">
@@ -87,6 +89,8 @@
   <script src="scripts/controllers/register.js"></script>
   <script src="scripts/services/alert.js"></script>
   <script src="scripts/services/authtoken.js"></script>
+  <script src="scripts/controllers/header.js"></script>
+  <script src="scripts/controllers/logout.js"></script>
   <!-- endbuild -->
 </body>
 
