@@ -74,11 +74,11 @@ app.post('/register', function (req, res) {
   var newUser = new User({
     email: user.email,
     password: user.password
-  })
+  });
 
   var payload = {
     iss: req.hostname,
-    syb: user._id
+    sub: newUser.id
   }
 
   var token = jwt.encode(payload, "secret_key");

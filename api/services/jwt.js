@@ -21,14 +21,24 @@ exports.encode = function (payload, secret) {
 exports.decode = function (token, secret) {
   var segments = token.split('.');
 
-  if (segments.lenth !== 3) {
+  if (segments.length !== 3) {
     throw new Error("Token structure incorrect");
   }
 
   var header = JSON.parse(base64Decode(segments[0]));
   var payload = JSON.parse(base64Decode(segments[1]));
 
+  var rawSignature = segments[0] + '.' + segments[1];
+
+  if (!verify(rawSignature, secret, segments[2])) {
+    throw new Error("Signature Verification Failed");
+
+  }
   return payload;
+}
+
+function verify(raw, secret, signature) {
+  return signature === sign(raw, secret);
 }
 
 function sign(str, key) {
