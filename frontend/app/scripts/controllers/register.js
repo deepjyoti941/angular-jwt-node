@@ -5,7 +5,8 @@ angular.module('jwtAngularNodeApp')
     $scope.submit = function () {
       var url = 'http://localhost:3000/register';
       var user = {
-        name: 'Deepjyoti'
+        email: $scope.email,
+        password: $scope.password
       };
       $http.post(url, user)
         .success(function (res) {
