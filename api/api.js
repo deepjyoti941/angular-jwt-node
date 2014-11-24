@@ -43,7 +43,13 @@ UserSchema.methods.toJSON = function () {
 
   return user;
 }
-//end eher
+//end here
+
+//compare password start here 
+UserSchema.methods.comparePasswords = function (password, callback) {
+  bcrypt.compare(password, this.password, callback);
+}
+//end here
 
 var User = mongoose.model('User', UserSchema);
 
@@ -67,7 +73,9 @@ UserSchema.pre('save', function (next) {
  * end here
  */
 
-
+/*
+ * user register endpoint start here
+ */
 app.post('/register', function (req, res) {
   var user = req.body;
 
@@ -76,20 +84,76 @@ app.post('/register', function (req, res) {
     password: user.password
   });
 
+  newUser.save(function (err) {
+    createSendToken(newUser, res);
+  })
+})
+/*
+ * end here
+ */
+
+/*
+ * login endpoint start here
+ */
+app.post('/login', function (req, res) {
+  req.user = req.body;
+
+  var searchUser = {
+    email: req.user.email
+  };
+
+  User.findOne(searchUser, function (err, user) {
+    if (err) {
+      throw err
+    };
+
+    if (!user) {
+      return res.status(401).send({
+        message: 'Wrong email/password'
+      });
+    }
+    user.comparePasswords(req.user.password, function (err, isMatch) {
+      if (err) {
+        throw err
+      };
+
+      if (!isMatch) {
+        return res.status(401).send({
+          message: 'Wrong email/password'
+        });
+      } else {
+        createSendToken(user, res);
+      }
+
+    });
+
+  })
+})
+
+/*
+ * end here
+ */
+
+
+/*
+ * function to create and send token- start here
+ */
+function createSendToken(user, res) {
   var payload = {
-    iss: req.hostname,
-    sub: newUser.id
+    sub: user.id
   }
 
   var token = jwt.encode(payload, "secret_key");
 
-  newUser.save(function (err) {
-    res.status(200).send({
-      user: newUser.toJSON(),
-      token: token
-    });
-  })
-})
+  res.status(200).send({
+    user: user.toJSON(),
+    token: token
+  });
+}
+/*
+ * end here
+ */
+
 
 /*
  * securing the job resource start here
