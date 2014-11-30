@@ -82,23 +82,39 @@ var loginStrategy = new LocalStrategy(strategyOptions, function (email, password
  * passport local register strategy start here
  */
 var registerStrategy = new LocalStrategy(strategyOptions, function(email, password, done) {
-  var newUser = new User({
-    email: email,
-    password: password
-  });
 
-  newUser.save(function (err) {
-    done(null, newUser);
-  })
+  var searchUser = {
+    email: email
+  };
+
+  User.findOne(searchUser, function (err, user) {
+    if (err) {
+      return done(err)
+    };
+
+    if (user) {
+      return done(null, false, {
+        message: 'email already exists'
+      });
+    }
+
+    var newUser = new User({
+      email: email,
+      password: password
+    });
+
+    newUser.save(function (err) {
+      done(null, newUser);
+
+    })
+  });
 });
 /*
  * end here
  */
+
 passport.use('local-register', registerStrategy);
 passport.use('local-login', loginStrategy);
-
-
-
 
 
 /*
