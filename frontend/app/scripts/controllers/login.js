@@ -12,4 +12,9 @@ angular.module('jwtAngularNodeApp')
           alert('warning', 'Some went wrong!', err.message);
         });
     };
+
+    $scope.google = function() {
+      auth.googleAuth().then()
+
+    }
   });
