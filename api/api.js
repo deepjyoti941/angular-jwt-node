@@ -35,12 +35,12 @@ app.use(function (req, res, next) {
 
 
 /*
- * passport local strategy start here
+ * passport local login strategy start here
  */
 
 var strategyOptions = {
   usernameField: 'email'
-}
+};
 
 var loginStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
   var searchUser = {
@@ -74,34 +74,31 @@ var loginStrategy = new LocalStrategy(strategyOptions, function (email, password
 
   })
 });
-passport.use(loginStrategy);
-
 /*
  * end here
  */
 
-
 /*
- * passport register strategy start here
+ * passport local register strategy start here
  */
-
-var registerStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
-
+var registerStrategy = new LocalStrategy(strategyOptions, function(email, password, done) {
   var newUser = new User({
-    email: user.email,
-    password: user.password
+    email: email,
+    password: password
   });
 
   newUser.save(function (err) {
-    done(null, newUser)
+    done(null, newUser);
   })
 });
-
 /*
  * end here
  */
+passport.use('local-register', registerStrategy);
+passport.use('local-login', loginStrategy);
 
-passport.use(registerStrategy);
+
+
 
 
 /*
@@ -154,18 +151,9 @@ UserSchema.pre('save', function (next) {
 /*
  * user register endpoint start here
  */
-app.post('/register', function (req, res) {
-  var user = req.body;
-
-  var newUser = new User({
-    email: user.email,
-    password: user.password
-  });
-
-  newUser.save(function (err) {
-    createSendToken(newUser, res);
-  })
-})
+app.post('/register',passport.authenticate('local-register'), function (req, res) {
+  createSendToken(req.user, res);
+});
 /*
  * end here
  */
@@ -173,7 +161,7 @@ app.post('/register', function (req, res) {
 /*
  * login endpoint start here
  */
-app.post('/login', passport.authenticate('local'), function (req, res) {
+app.post('/login', passport.authenticate('local-login'), function (req, res) {
   createSendToken(req.user, res);
 })
 
