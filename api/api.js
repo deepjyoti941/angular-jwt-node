@@ -37,9 +37,12 @@ app.use(function (req, res, next) {
 /*
  * passport local strategy start here
  */
-var strategy = new LocalStrategy({
+
+var strategyOptions = {
   usernameField: 'email'
-}, function (email, password, done) {
+}
+
+var loginStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
   var searchUser = {
     email: email
   };
@@ -71,12 +74,34 @@ var strategy = new LocalStrategy({
 
   })
 });
-passport.use(strategy);
+passport.use(loginStrategy);
+
 /*
  * end here
  */
 
 
+/*
+ * passport register strategy start here
+ */
+
+var registerStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
+
+  var newUser = new User({
+    email: user.email,
+    password: user.password
+  });
+
+  newUser.save(function (err) {
+    done(null, newUser)
+  })
+});
+
+/*
+ * end here
+ */
+
+passport.use(registerStrategy);
 
 
 /*
