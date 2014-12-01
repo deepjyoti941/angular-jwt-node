@@ -37,4 +37,16 @@ angular.module('jwtAngularNodeApp').config(function ($urlRouterProvider, $stateP
   $httpProvider.interceptors.push('authInterceptor');
 })
 
-.constant('API_URL', 'http://localhost:3000/');
+.constant('API_URL', 'http://localhost:3000/')
+
+.run(function ($window) {
+  var params = $window.location.search.substring();
+
+  //checking if params is valid and we actualy in window popup instead of main window
+  if (params && $window.opener && $window.opener.location.origin === $window.location.origin) {
+    var pair = params.split('=');
+    var code = decodeURIComponent(pair[1]);
+
+    $window.opener.postMessage(code, $window.location.origin)
+  };
+});
