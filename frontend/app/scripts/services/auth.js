@@ -36,8 +36,12 @@ angular.module('jwtAngularNodeApp')
 
       $window.addEventListener('message', function(event) {
         if (event.origin === $window.location.origin) {
-          console.log(event.data);
+          var code = event.data;
           popup.close();
+
+          $http.post(API_URL + 'auth/google', { 
+            code: code
+          });
         };
       })
     }

@@ -239,6 +239,17 @@ app.get('/jobs', function (req, res) {
  * end here
  */
 
+/*
+ * Google auth  start here
+ */
+
+app.post('/auth/google', function(req, res) {
+  console.log(req.body.code);
+});
+
+ /*
+ * end here
+ */
 
 mongoose.connect('mongodb://localhost/jwtAngularNodeApp');
 
