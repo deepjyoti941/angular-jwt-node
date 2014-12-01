@@ -22,9 +22,10 @@ angular.module('jwtAngularNodeApp')
       }).success(authSuccessfull);
     }
 
+    var clientId = '949220769540-lkk0a18lt4tp8tdh2e657rrtd6pcprn0.apps.googleusercontent.com';
     var urlBuilder = [];
     urlBuilder.push('response_type=code',
-                    'client_id=949220769540-lkk0a18lt4tp8tdh2e657rrtd6pcprn0.apps.googleusercontent.com',
+                    'client_id=' + clientId,
                     'redirect_uri=' + window.location.origin,
                     'scope=profile email');
     this.googleAuth = function () {
@@ -40,7 +41,9 @@ angular.module('jwtAngularNodeApp')
           popup.close();
 
           $http.post(API_URL + 'auth/google', { 
-            code: code
+            code: code,
+            clientId: clientId,
+            redirectUri: window.location.origin
           });
         };
       })

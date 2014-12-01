@@ -5,6 +5,7 @@ var bcrypt = require('bcrypt-nodejs');
 var jwt = require('jwt-simple');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var request = require('request');
 
 
 var app = express();
@@ -244,7 +245,22 @@ app.get('/jobs', function (req, res) {
  */
 
 app.post('/auth/google', function(req, res) {
-  console.log(req.body.code);
+  var url = 'https://accounts.google.com/o/oauth2/token';
+
+  var params = {
+    client_id: req.body.clientId,
+    redirect_uri: req.body.redirectUri,
+    code: req.body.code,
+    grant_type: 'authorization_code',
+    client_secret: ''
+  }
+
+  request.post(url, {
+    json: true,
+    form: params
+  }, function(err, response, token) {
+    console.log(token);
+  });
 });
 
  /*
