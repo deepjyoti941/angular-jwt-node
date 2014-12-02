@@ -8,13 +8,15 @@ angular.module('jwtAngularNodeApp')
         .success(function (res) {
           alert('success', 'Welcome', 'Thanks for comming back ' + res.user.email + ' !');
         })
-        .error(function (err) {
-          alert('warning', 'Some went wrong!', err.message);
-        });
+        .error(handleError);
     };
 
     $scope.google = function() {
-      auth.googleAuth().then()
-
+      auth.googleAuth().then(function(res) {
+        alert('success', 'Welcome', 'Thanks for comming back ' + res.user.displayName + ' !');
+      },handleError);
+    }
+    function handleError(err) {
+      alert('warning', 'Some went wrong!', err.message);
     }
   });

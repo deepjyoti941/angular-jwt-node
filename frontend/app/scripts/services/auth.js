@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('jwtAngularNodeApp')
-  .service('auth', function ($http, API_URL, authToken, $state, $window) {
+  .service('auth', function ($http, API_URL, authToken, $state, $window, $q) {
 
     function authSuccessfull(res) {
       authToken.setToken(res.token);
@@ -32,6 +32,8 @@ angular.module('jwtAngularNodeApp')
       var url = "https://accounts.google.com/o/oauth2/auth?" + urlBuilder.join('&');
       var options = "width=500, height=500, left="+ ($window.outerWidth - 500) / 2 + ",top="+ ($window.outerWidth - 500) / 2.5;
       
+      var deferred = $q.defer();
+
       var popup = $window.open(url, '', options);
       $window.focus();
 
@@ -44,9 +46,14 @@ angular.module('jwtAngularNodeApp')
             code: code,
             clientId: clientId,
             redirectUri: window.location.origin
+          }).success(function(jwt) {
+            authSuccessfull(jwt);
+            deferred.resolve(jwt); //resolve the deferred to send back the promise
           });
         };
-      })
+      });
+
+      return deferred.promise;
     }
 
   });
