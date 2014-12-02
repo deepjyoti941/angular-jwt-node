@@ -245,21 +245,35 @@ app.get('/jobs', function (req, res) {
  */
 
 app.post('/auth/google', function(req, res) {
+
   var url = 'https://accounts.google.com/o/oauth2/token';
+  var apiUrl = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
 
   var params = {
     client_id: req.body.clientId,
     redirect_uri: req.body.redirectUri,
     code: req.body.code,
     grant_type: 'authorization_code',
-    client_secret: ''
+    client_secret: 'kJVeyUgEyfZXcXmPe0Sds_tQ'
   }
 
   request.post(url, {
     json: true,
     form: params
   }, function(err, response, token) {
-    console.log(token);
+    var accessToken = token.access_token;
+    var headers = {
+      Authorization: 'Bearer' + accessToken
+    }
+
+    request.get({
+      url: apiUrl, 
+      header: headers, 
+      json: true
+    }, function(err, response, profile) {
+      console.log(profile);
+    })
+
   });
 });
 

@@ -22,7 +22,7 @@ angular.module('jwtAngularNodeApp')
       }).success(authSuccessfull);
     }
 
-    var clientId = '949220769540-lkk0a18lt4tp8tdh2e657rrtd6pcprn0.apps.googleusercontent.com';
+    var clientId = '376843532263-ksso136ivtl50mjnomou7tonagttu7e1.apps.googleusercontent.com';
     var urlBuilder = [];
     urlBuilder.push('response_type=code',
                     'client_id=' + clientId,
