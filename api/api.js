@@ -124,7 +124,9 @@ passport.use('local-login', loginStrategy);
 
 var UserSchema = new mongoose.Schema({
   email: String,
-  password: String
+  password: String,
+  googleId: String,
+  displayName: String
 })
 
 //hide the password when response - start here
@@ -271,7 +273,19 @@ app.post('/auth/google', function(req, res) {
       header: headers, 
       json: true
     }, function(err, response, profile) {
-      console.log(profile);
+      //search for a user with googleId
+      User.findOne({googleId: profile.sub}, function(err, foundUser) {
+        if (foundUser) return createSendToken(foundUser, res);
+
+        //create new user
+        var newUser = new User();
+        newUser.googleId = profile.sub;
+        newUser.displayName = profile.name;
+        newUser.save(function(err) {
+          if(err) return next(err);
+          createSendToken(newUser, res);
+        })
+      })
     })
 
   });
