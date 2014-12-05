@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('jwtAngularNodeApp').config(function ($urlRouterProvider, $stateProvider, $httpProvider) {
+angular.module('jwtAngularNodeApp').config(function ($urlRouterProvider, $stateProvider, $httpProvider, $authProvider, API_URL) {
 
   $urlRouterProvider.otherwise('/');
 
@@ -32,6 +32,11 @@ angular.module('jwtAngularNodeApp').config(function ($urlRouterProvider, $stateP
   .state('logout', {
     url: '/logout',
     controller: 'LogoutCtrl'
+  });
+
+  $authProvider.google({
+    clientId: '376843532263-ksso136ivtl50mjnomou7tonagttu7e1.apps.googleusercontent.com',
+    url: API_URL + 'auth/google'
   });
 
   $httpProvider.interceptors.push('authInterceptor');

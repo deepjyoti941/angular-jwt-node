@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('jwtAngularNodeApp')
-  .controller('LoginCtrl', function ($scope, alert, auth) {
+  .controller('LoginCtrl', function ($scope, alert, auth, $authProvider) {
     $scope.submit = function () {
 
       auth.login($scope.email, $scope.password)
@@ -11,9 +11,9 @@ angular.module('jwtAngularNodeApp')
         .error(handleError);
     };
 
-    $scope.google = function() {
-      auth.googleAuth().then(function(res) {
-        alert('success', 'Welcome', 'Thanks for comming back ' + res.user.displayName + ' !');
+    $scope.authenticate = function(provider) {
+      $auth.authenticate(provider).then(function(res) {
+        alert('success', 'Welcome', 'Thanks for comming back ' + res.data.user.displayName + ' !');
       },handleError);
     }
     function handleError(err) {
