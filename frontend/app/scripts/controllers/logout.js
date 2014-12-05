@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('jwtAngularNodeApp')
-  .controller('LogoutCtrl', function (authToken, $state) {
-    authToken.removeToken();
-    $state.go('main');
-  });
+.controller('LogoutCtrl', function ($auth, $state) {
+	$auth.logout();
+	$state.go('main');
+});
