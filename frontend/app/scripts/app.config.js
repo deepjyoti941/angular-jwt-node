@@ -34,6 +34,10 @@ angular.module('jwtAngularNodeApp').config(function ($urlRouterProvider, $stateP
     controller: 'LogoutCtrl'
   });
 
+  $authProvider.loginUrl = API_URL + 'login';
+  $authProvider.signupUrl = API_URL + 'register';
+
+
   $authProvider.google({
     clientId: '376843532263-ksso136ivtl50mjnomou7tonagttu7e1.apps.googleusercontent.com',
     url: API_URL + 'auth/google'

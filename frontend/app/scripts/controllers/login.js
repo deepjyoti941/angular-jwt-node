@@ -1,14 +1,14 @@
 'use strict';
 
 angular.module('jwtAngularNodeApp')
-  .controller('LoginCtrl', function ($scope, alert, auth, $authProvider) {
+  .controller('LoginCtrl', function ($scope, alert, auth, $auth ) {
     $scope.submit = function () {
 
-      auth.login($scope.email, $scope.password)
-        .success(function (res) {
-          alert('success', 'Welcome', 'Thanks for comming back ' + res.user.email + ' !');
+      $auth.login({email: $scope.email, password: $scope.password})
+        .then(function (res) {
+          alert('success', 'Welcome', 'Thanks for comming back ' + res.data.user.email + ' !');
         })
-        .error(handleError);
+        .catch(handleError);
     };
 
     $scope.authenticate = function(provider) {
