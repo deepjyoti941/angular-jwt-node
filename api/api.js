@@ -6,6 +6,7 @@ var jwt = require('jwt-simple');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var request = require('request');
+var moment = require('moment');
 
 
 var app = express();
@@ -194,7 +195,8 @@ app.post('/login', passport.authenticate('local-login'), function (req, res) {
  */
 function createSendToken(user, res) {
   var payload = {
-    sub: user.id
+    sub: user.id,
+    exp: moment().add(10, 'days').unix()  // token expiration
   }
 
   var token = jwt.encode(payload, "secret_key");
