@@ -9,6 +9,10 @@ var request = require('request');
 var moment = require('moment');
 var facebookAuth = require('./services/facebookAuth.js')
 var createSendToken = require('./services/jwt.js');
+var _ = require('underscore');
+var fs = require('fs');
+var nodemailer = require('nodemailer');
+var smtpTransport = require('nodemailer-smtp-transport');
 
 var app = express();
 
@@ -125,11 +129,12 @@ passport.use('local-login', loginStrategy);
  */
 
 var UserSchema = new mongoose.Schema({
-  email: String,
-  password: String,
-  facebookId: String,
-  googleId: String,
-  displayName: String
+  email       : String,
+  password    : String,
+  facebookId  : String,
+  googleId    : String,
+  displayName : String,
+  active      : Boolean
 })
 
 //hide the password when response - start here
@@ -174,11 +179,54 @@ UserSchema.pre('save', function (next) {
  * user register endpoint start here
  */
 app.post('/register',passport.authenticate('local-register'), function (req, res) {
+  send(req.user.email);
   createSendToken(req.user, res);
 });
 /*
  * end here
  */
+
+
+/*
+ * user email verification endpoint start here
+ */
+
+app.get('/auth/verifyEmail',function (req, res) {
+  var token = req.query.token;
+
+  //console.log(token);
+
+  var payload = jwt.decode(token, "secret_key");
+
+  var email = payload.sub;
+
+  if (!email) return handleError(res);
+
+  User.findOne({email: email}, function(err, foundUser) {
+    if(err) return status(500);
+
+    if(!foundUser) return handleError(res);
+
+    var user = new User({
+      email: email
+    });
+
+    if(!user.active)
+      user.active = true;
+
+    user.save(function(err) {
+      if(err) return status(500);
+
+      return res.redirect('http://localhost:9000/');
+
+    });
+
+  });
+});
+/*
+ * end here
+ */
+
 
 /*
  * login endpoint start here
@@ -308,6 +356,81 @@ app.post('/auth/google', function(req, res) {
  /*
  * end here
  */
+
+ /*
+ * email verification code start here
+ */
+
+ var model = {
+  verifyUrl : 'http://localhost:3000/auth/verifyEmail?token=',
+  title     : 'Jwt Angular-Nodejs',
+  subTitle  : 'Thanks for signing up!',
+  body      : 'Please verify your email address by clicking the button below'
+ }
+
+ var send = function(email) {
+  var payload = {
+      sub: email
+    }
+
+    var token = jwt.encode(payload, "secret_key");
+
+    // console.log(getHtml(token));
+  var transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+          user: 'avirajsaikia@gmail.com',
+          pass: '#########'
+      }
+  });
+
+  var mailOptions = {
+    from    : 'Accounts <avirajsaikia@gmail.com>',
+    to      : email,
+    subject : 'Jwt Angular-Nodejs Account verification',
+    html    : getHtml(token)
+  }
+
+  transporter.sendMail(mailOptions, function(err, info) {
+    if (err) return res.status(500, err);
+
+    console.log('Email sent' , info.response);
+
+  });
+
+ }
+
+  // var endpointHandler = function (req, res) {
+  //   var token = req.query.token;
+  // }
+
+  function getHtml(token) {
+    var path = './views/emailVerification.html';
+    var html = fs.readFileSync(path, encoding = 'utf8');
+
+    var template = _.template(html);
+
+    model.verifyUrl += token;
+
+    return template(model);
+  }
+
+
+  _.templateSettings = {
+    interpolate: /\{\{(.+?)\}\}/g
+  };
+
+
+ /*
+ * end here
+ */
+
+
+function handleError(res) {
+  return res.status(401).send({
+    message: 'Authentication failed, unable to verify email'
+  });
+}
 
 mongoose.connect('mongodb://localhost/jwtAngularNodeApp');
 
