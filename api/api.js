@@ -7,7 +7,8 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var request = require('request');
 var moment = require('moment');
-
+var facebookAuth = require('./services/facebookAuth.js')
+var createSendToken = require('./services/jwt.js');
 
 var app = express();
 
@@ -126,6 +127,7 @@ passport.use('local-login', loginStrategy);
 var UserSchema = new mongoose.Schema({
   email: String,
   password: String,
+  facebookId: String,
   googleId: String,
   displayName: String
 })
@@ -140,7 +142,7 @@ UserSchema.methods.toJSON = function () {
 }
 //end here
 
-//compare password start here 
+//compare password start here
 UserSchema.methods.comparePasswords = function (password, callback) {
   bcrypt.compare(password, this.password, callback);
 }
@@ -191,21 +193,31 @@ app.post('/login', passport.authenticate('local-login'), function (req, res) {
 
 
 /*
+ * facebook login endpoint start here
+ */
+app.post('/auth/facebook', facebookAuth);
+
+/*
+ * end here
+ */
+
+
+/*
  * function to create and send token- start here
  */
-function createSendToken(user, res) {
-  var payload = {
-    sub: user.id,
-    exp: moment().add(10, 'days').unix()  // token expiration
-  }
+// function createSendToken(user, res) {
+//   var payload = {
+//     sub: user.id,
+//     exp: moment().add(10, 'days').unix()  // token expiration
+//   }
 
-  var token = jwt.encode(payload, "secret_key");
+//   var token = jwt.encode(payload, "secret_key");
 
-  res.status(200).send({
-    user: user.toJSON(),
-    token: token
-  });
-}
+//   res.status(200).send({
+//     user: user.toJSON(),
+//     token: token
+//   });
+// }
 /*
  * end here
  */
@@ -271,8 +283,8 @@ app.post('/auth/google', function(req, res) {
     }
 
     request.get({
-      url: apiUrl, 
-      header: headers, 
+      url: apiUrl,
+      header: headers,
       json: true
     }, function(err, response, profile) {
       //search for a user with googleId

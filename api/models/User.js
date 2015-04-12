@@ -3,10 +3,24 @@ var bcrypt = require('bcrypt-nodejs');
 
 var UserSchema = new mongoose.Schema({
   email: String,
-  password: String
+  password: String,
+  facebookId: String,
+  googleId: String,
+  displayName: String
 })
 
 exports.model = mongoose.model('User', UserSchema);
+
+UserSchema.methods.toJSON = function () {
+  var user = this.toObject();
+  delete user.password;
+
+  return user;
+}
+
+UserSchema.methods.comparePasswords = function (password, callback) {
+  bcrypt.compare(password, this.password, callback);
+}
 
 UserSchema.pre('save', function (next) {
   var user = this;

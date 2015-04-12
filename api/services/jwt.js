@@ -1,55 +1,16 @@
-var crypto = require('crypto');
+var jwt = require('jwt-simple');
+var moment = require('moment');
 
-exports.encode = function (payload, secret) {
-  algorithm = 'HS256';
-
-  /*
-   *jwt composed of header+payload_signature
-   */
-
-  var header = {
-    typ: 'JWT',
-    alg: 'algorithm'
-  };
-
-  var jwt = base64Encode(JSON.stringify(header)) + '.' + base64Encode(JSON.stringify(payload));
-
-  return jwt + '.' + sign(jwt, secret);
-
-}
-
-exports.decode = function (token, secret) {
-  var segments = token.split('.');
-
-  if (segments.length !== 3) {
-    throw new Error("Token structure incorrect");
+module.exports = function(user, res) {
+  var payload = {
+    sub: user.id,
+    exp: moment().add(10, 'days').unix()  // token expiration
   }
 
-  var header = JSON.parse(base64Decode(segments[0]));
-  var payload = JSON.parse(base64Decode(segments[1]));
+  var token = jwt.encode(payload, "secret_key");
 
-  var rawSignature = segments[0] + '.' + segments[1];
-
-  if (!verify(rawSignature, secret, segments[2])) {
-    throw new Error("Signature Verification Failed");
-
-  }
-  return payload;
-}
-
-function verify(raw, secret, signature) {
-  return signature === sign(raw, secret);
-}
-
-function sign(str, key) {
-  return crypto.createHmac('sha256', key).update(str).digest('base64');
-}
-
-function base64Encode(str) {
-  return new Buffer(str).toString('base64');
-}
-
-function base64Decode(str) {
-  return new Buffer(str, 'base64').toString();
-
+  res.status(200).send({
+    user: user.toJSON(),
+    token: token
+  });
 }
